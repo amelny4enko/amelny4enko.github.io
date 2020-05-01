@@ -102,6 +102,7 @@ class AppComponent {
     constructor(httpClient) {
         this.httpClient = httpClient;
         this.baseUrl = 'https://www.macrotrends.net/stocks/charts/';
+        this.userStr = 'https://www.macrotrends.net/stocks/charts/CACI/caci/total-assets';
         this.data = [];
         this.head = [
             'Date',
@@ -110,20 +111,19 @@ class AppComponent {
             'Annual Cash Flow from Investing Activities',
             'Annual Cash Flow from Operating Activities',
             'Quarterly Cash on Hand',
-            'Depreciation and Amortization',
-            'Dividends Paid',
+            'Annual Total Depreciation and Amortization - Cash Flow',
+            'Annual Total Common and Preferred Stock Dividends Paid',
             'Quarterly EBITDA',
             'Quarterly EPS',
             'Gross Margin',
             'Quarterly Gross Profit',
             'Inventory Turnover Ratio',
-            'Net Cash Flow',
+            'Annual Net Cash Flow',
             'Quarterly Net Income',
-            'Net Profit Margin',
-            'Number of Employees',
+            'Net Margin',
+            'Annual Number of Employees',
             'Quarterly Operating Income',
-            'Operating Margin Quarterly',
-            'PE Ratio',
+            'Operating Margin',
             'Price to Book Ratio',
             'Price to FCF Ratio',
             'Price to Sales Ratio',
@@ -136,21 +136,21 @@ class AppComponent {
             'Return on Assets',
             'Return on Equity',
             'Return on Investment',
-            'Share Holder Equity Quarterly',
+            'Quarterly Share Holder Equity',
             'Stock Price',
             'Total Assets',
             'Current Assets',
             'Current Liabilities',
             'Quarterly Total Liabilities',
-            'Total Long Term Liabilities',
-            'Total Long-Term Assets (Q)',
+            'Quarterly Total Long Term Liabilities',
+            'Quarterly Total Long-Term Assets',
         ];
     }
     start() {
         this.company = this.userStr.slice(this.userStr.indexOf('charts/') + 7, this.userStr.lastIndexOf('/'));
         if (this.company) {
             this.data = [];
-            const uns = Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["combineLatest"])(this.fetchData('/cash-flow-from-financial-activities', 'Annual Cash Flow from Financial Activities'), this.fetchData('/cash-flow-from-investing-activities', 'Annual Cash Flow from Investing Activities'), this.fetchData('/cash-flow-from-operating-activities', 'Annual Cash Flow from Operating Activities'), this.fetchData('/cash-on-hand', 'Quarterly Cash on Hand'), this.fetchData('/ebitda', 'Quarterly EBITDA'), this.fetchData('/eps-earnings-per-share-diluted', 'Quarterly EPS'), this.fetchData('/gross-margin', 'Gross Margin Historical Data'), this.fetchData('/gross-profit', 'Quarterly Gross Profit'), this.fetchData('/net-income', 'Quarterly Net Income'), this.fetchData('/operating-income', 'Quarterly Operating Income'), this.fetchData('/pe-ration', 'PE Ratio Historical Data'), this.fetchData('/price-book', 'Price/Book Ratio Historical Data'), this.fetchData('/price-fcf', 'Price to Free Cash Flow Ratio Historical Data'), this.fetchData('/price-sales', 'P/S Ratio Historical Data'), this.fetchData('/shares-outstanding', 'Quarterly Shares Outstanding'), this.fetchData('/revenue', 'Quarterly Revenue'), this.fetchData('/roa', 'ROA - Return on Assets Historical Data'), this.fetchData('/roe', 'ROE - Return on Equity Historical Data'), this.fetchData('/roi', 'ROI - Return on Investment Historical Data'), this.fetchData('/current-ratio', 'Current Ratio Historical Data'), this.fetchData('/total-liabilities', 'Quarterly Total Liabilities')).subscribe((tables) => {
+            const uns = Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["combineLatest"])(this.fetchData('/cash-flow-from-financial-activities', 'Annual Cash Flow from Financial Activities'), this.fetchData('/cash-flow-from-investing-activities', 'Annual Cash Flow from Investing Activities'), this.fetchData('/cash-flow-from-operating-activities', 'Annual Cash Flow from Operating Activities'), this.fetchData('/cash-on-hand', 'Quarterly Cash on Hand'), this.fetchData('/ebitda', 'Quarterly EBITDA'), this.fetchData('/eps-earnings-per-share-diluted', 'Quarterly EPS'), this.fetchData('/gross-margin', 'Gross Margin Historical Data'), this.fetchData('/gross-profit', 'Quarterly Gross Profit'), this.fetchData('/net-income', 'Quarterly Net Income'), this.fetchData('/operating-income', 'Quarterly Operating Income'), this.fetchData('/pe-ration', 'PE Ratio Historical Data'), this.fetchData('/price-book', 'Price/Book Ratio Historical Data'), this.fetchData('/price-fcf', 'Price to Free Cash Flow Ratio Historical Data'), this.fetchData('/price-sales', 'P/S Ratio Historical Data'), this.fetchData('/shares-outstanding', 'Quarterly Shares Outstanding'), this.fetchData('/revenue', 'Quarterly Revenue'), this.fetchData('/roa', 'ROA - Return on Assets Historical Data'), this.fetchData('/roe', 'ROE - Return on Equity Historical Data'), this.fetchData('/roi', 'ROI - Return on Investment Historical Data'), this.fetchData('/current-ratio', 'Current Ratio Historical Data'), this.fetchData('/total-liabilities', 'Quarterly Total Liabilities'), this.fetchData('/total-depreciation-amortization-cash-flow', 'Annual Total Depreciation and Amortization - Cash Flow'), this.fetchData('/total-common-preferred-stock-dividends-paid', 'Annual Total Common and Preferred Stock Dividends Paid'), this.fetchData('/net-cash-flow', 'Annual Net Cash Flow'), this.fetchData('/net-profit-margin', 'Net Profit Margin Historical Data'), this.fetchData('/number-of-employees', 'Annual Number of Employees'), this.fetchData('/operating-margin', 'Operating Margin Historical Data'), this.fetchData('/quick-ratio', 'Quick Ratio Historical Data'), this.fetchData('/total-share-holder-equity', 'Quarterly Share Holder Equity'), this.fetchData('/total-long-term-assets', 'Quarterly Total Long-Term Assets'), this.fetchData('/total-long-term-liabilities', 'Quarterly Total Long Term Liabilities')).subscribe((tables) => {
                 uns.unsubscribe();
                 console.log(tables);
                 this.createTable(tables);
