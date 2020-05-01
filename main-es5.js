@@ -204,104 +204,120 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.httpClient = httpClient;
         this.baseUrl = 'https://www.macrotrends.net/stocks/charts/';
         this.data = [];
+        this.head = ['Date', 'Asset Turnover', 'Annual Cash Flow from Financial Activities', 'Annual Cash Flow from Investing Activities', 'Annual Cash Flow from Operating Activities', 'Quarterly Cash on Hand', 'Depreciation and Amortization', 'Dividends Paid', 'Quarterly EBITDA', 'Quarterly EPS', 'Gross Margin', 'Quarterly Gross Profit', 'Inventory Turnover Ratio', 'Net Cash Flow', 'Quarterly Net Income', 'Net Profit Margin', 'Number of Employees', 'Quarterly Operating Income', 'Operating Margin Quarterly', 'PE Ratio', 'Price to Book Ratio', 'Price to FCF Ratio', 'Price to Sales Ratio', 'Quick Ratio', 'Quarterly Shares Growth', 'Quarterly Shares Outstanding', 'Receiveable Turnover', 'Quarterly Revenue', 'TTM Revenue', 'Return on Assets', 'Return on Equity', 'Return on Investment', 'Share Holder Equity Quarterly', 'Stock Price', 'Total Assets', 'Current Assets', 'Current Liabilities', 'Quarterly Total Liabilities', 'Total Long Term Liabilities', 'Total Long-Term Assets (Q)'];
       }
 
       _createClass(AppComponent, [{
-        key: "getData",
-        value: function getData() {
+        key: "start",
+        value: function start() {
           var _this = this;
 
           this.company = this.userStr.slice(this.userStr.indexOf('charts/') + 7, this.userStr.lastIndexOf('/'));
 
           if (this.company) {
             this.data = [];
-            var uns = Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["combineLatest"])(this.fetchData('/eps-basic-net-earnings-per-share', 'Quarterly Basic EPS'), this.fetchData('/shares-outstanding', 'Quarterly Shares Outstanding'), this.fetchData('/cash-flow-from-financial-activities', 'Annual Cash Flow from Financial Activities'), this.fetchData('/cash-flow-from-investing-activities', 'Annual Cash Flow from Investing Activities'), this.fetchData('/cash-flow-from-operating-activities', 'Annual Cash Flow from Operating Activities'), this.fetchData('/current-ratio', 'Current Ratio Historical Data'), this.fetchData('/debt-equity-ratio', 'Debt/Equity Ratio Historical Data'), this.fetchData('/ebit', 'Quarterly EBIT'), this.fetchData('/ebitda', 'Quarterly EBITDA'), this.fetchData('/price-fcf', 'Price to Free Cash Flow Ratio Historical Data'), this.fetchData('/gross-margin', 'Gross Margin Historical Data'), this.fetchData('/gross-profit', 'Quarterly Gross Profit'), this.fetchData('/pe-ration', 'PE Ratio Historical Data'), this.fetchData('/price-book', 'Price/Book Ratio Historical Data'), this.fetchData('/price-sales', 'P/S Ratio Historical Data')).subscribe(function (tables) {
-              console.log(tables);
+            var uns = Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["combineLatest"])(this.fetchData('/cash-flow-from-financial-activities', 'Annual Cash Flow from Financial Activities'), this.fetchData('/cash-flow-from-investing-activities', 'Annual Cash Flow from Investing Activities'), this.fetchData('/cash-flow-from-operating-activities', 'Annual Cash Flow from Operating Activities'), this.fetchData('/cash-on-hand', 'Quarterly Cash on Hand'), this.fetchData('/ebitda', 'Quarterly EBITDA'), this.fetchData('/eps-earnings-per-share-diluted', 'Quarterly EPS'), this.fetchData('/gross-margin', 'Gross Margin Historical Data'), this.fetchData('/gross-profit', 'Quarterly Gross Profit'), this.fetchData('/net-income', 'Quarterly Net Income'), this.fetchData('/operating-income', 'Quarterly Operating Income'), this.fetchData('/pe-ration', 'PE Ratio Historical Data'), this.fetchData('/price-book', 'Price/Book Ratio Historical Data'), this.fetchData('/price-fcf', 'Price to Free Cash Flow Ratio Historical Data'), this.fetchData('/price-sales', 'P/S Ratio Historical Data'), this.fetchData('/shares-outstanding', 'Quarterly Shares Outstanding'), this.fetchData('/revenue', 'Quarterly Revenue'), this.fetchData('/roa', 'ROA - Return on Assets Historical Data'), this.fetchData('/roe', 'ROE - Return on Equity Historical Data'), this.fetchData('/roi', 'ROI - Return on Investment Historical Data'), this.fetchData('/current-ratio', 'Current Ratio Historical Data'), this.fetchData('/total-liabilities', 'Quarterly Total Liabilities')).subscribe(function (tables) {
               uns.unsubscribe();
-              var maxTableIndex;
-              var maxTableLength = 0;
-              tables.forEach(function (table, index) {
-                if (maxTableLength < table.length) {
-                  maxTableLength = table.length;
-                  maxTableIndex = index;
-                }
+              console.log(tables);
+
+              _this.createTable(tables);
+
+              tables.forEach(function (table) {
+                return _this.fillTable(table);
               });
-
-              if (maxTableIndex !== undefined) {
-                _this.data = Object.assign([], tables[maxTableIndex]);
-                tables.splice(maxTableIndex, 1);
-
-                _this.sortRows();
-
-                tables.forEach(function (table) {
-                  return _this.concatTable(table);
-                });
-              }
             });
           }
         }
       }, {
-        key: "sortRows",
-        value: function sortRows() {
-          var head = Object.assign([], this.data[0]);
-          this.data.splice(0, 1);
-          this.data.sort(function (a, b) {
-            return new Date(b[0]).getTime() - new Date(a[0]).getTime();
-          });
-          this.data.unshift(head);
-        }
-      }, {
-        key: "concatTable",
-        value: function concatTable(table) {
+        key: "createTable",
+        value: function createTable(tables) {
           var _this2 = this;
 
-          var indexesB = [];
-          table[0].forEach(function (cell, index) {
-            if (!_this2.data[0].includes(cell)) {
-              indexesB.push(index);
+          var maxTableLength = 0;
+          var maxTableIndex;
+          tables.forEach(function (table, index) {
+            if (maxTableLength < table.length) {
+              maxTableLength = table.length;
+              maxTableIndex = index;
             }
           });
 
-          if (table[1] && table[1][0] && table[1][0].length === 4) {
-            table.forEach(function (row) {
-              var year = +row[0];
+          if (maxTableIndex !== undefined) {
+            var table = Object.assign([], tables[maxTableIndex]);
+            table.splice(0, 1);
+            table.forEach(function (lr) {
+              var gr = [];
 
-              if (!isNaN(++year)) {
-                var arr = _this2.data.filter(function (rowA) {
-                  return +rowA[0].slice(0, 4) === year;
+              _this2.head.forEach(function () {
+                return gr.push(0);
+              });
+
+              gr[0] = lr[0];
+
+              _this2.data.push(gr);
+            });
+            this.data.sort(function (a, b) {
+              return new Date(b[0]).getTime() - new Date(a[0]).getTime();
+            });
+            this.data.unshift(this.head);
+          }
+        }
+      }, {
+        key: "fillTable",
+        value: function fillTable(table) {
+          var _this3 = this;
+
+          if (table.length > 1) {
+            var ctable = Object.assign([], table);
+            var headMap = [];
+            ctable[0].forEach(function (ld) {
+              return headMap.push(_this3.head.findIndex(function (gd) {
+                return gd.toLowerCase() === ld.toLowerCase();
+              }));
+            });
+            ctable.splice(0, 1);
+            ctable.forEach(function (lr) {
+              if (lr[0].length === 4) {
+                var r = _this3.data.find(function (gr) {
+                  return gr[0].slice(0, 4) === lr[0];
                 });
 
-                row[0] = arr[arr.length - 1][0];
+                lr[0] = r && r[0];
               }
+
+              var gri = _this3.data.findIndex(function (gr) {
+                return gr[0].toLowerCase() === lr[0].toLowerCase();
+              });
+
+              lr.forEach(function (lc, lci) {
+                if (headMap[lci] !== -1) {
+                  if (lc.includes('B')) {
+                    var amount = lc.slice(1, -1);
+
+                    if (!isNaN(+amount)) {
+                      lc = lc.slice(0, 1) + +amount * 1000;
+                    }
+                  }
+
+                  _this3.data[gri][headMap[lci]] = lc;
+                }
+              });
             });
           }
-
-          this.data.forEach(function (rowA) {
-            var rowBIndex = table.findIndex(function (rowB) {
-              return rowA[0].toLowerCase() === rowB[0].toLowerCase();
-            });
-            indexesB.forEach(function (indexB) {
-              if (rowBIndex !== -1) {
-                rowA.push(table[rowBIndex][indexB]);
-              } else {
-                rowA.push('0');
-              }
-            });
-          });
         }
       }, {
         key: "fetchData",
         value: function fetchData(url, tableName) {
-          var _this3 = this;
+          var _this4 = this;
 
           return this.httpClient.get(this.baseUrl + this.company + url, {
             responseType: 'text'
           }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
-            var clearText = _this3.clearText(response);
+            var clearText = _this4.clearText(response);
 
-            var table = _this3.getTable(clearText, tableName);
+            var table = _this4.getTable(clearText, tableName);
 
-            return _this3.parseTable(table, tableName);
+            return _this4.parseTable(table, tableName);
           }));
         }
       }, {
@@ -375,7 +391,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "button", 2);
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("click", function AppComponent_Template_button_click_3_listener() {
-            return ctx.getData();
+            return ctx.start();
           });
 
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](4, "GET");
@@ -416,7 +432,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       },
       directives: [_angular_forms__WEBPACK_IMPORTED_MODULE_4__["DefaultValueAccessor"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["NgControlStatus"], _angular_forms__WEBPACK_IMPORTED_MODULE_4__["NgModel"], _angular_common__WEBPACK_IMPORTED_MODULE_5__["NgForOf"]],
-      styles: [".nav[_ngcontent-%COMP%] {\n  display: flex;\n  margin-bottom: 20px;\n}\n.nav[_ngcontent-%COMP%]   .input[_ngcontent-%COMP%] {\n  border: 1px solid #4a4a4a;\n  border-radius: 15px 0 0 15px;\n  line-height: 2;\n  width: 250px;\n  padding: 0 10px 0 15px;\n  outline: none;\n}\n.nav[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%] {\n  background-color: #4a4a4a;\n  border: none;\n  border-radius: 0 15px 15px 0;\n  color: #ffffff;\n  padding: 0 20px 0 15px;\n  outline: none;\n}\n.nav[_ngcontent-%COMP%]   .company[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  font-weight: bold;\n  margin-left: 20px;\n  text-transform: uppercase;\n}\ntable[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:nth-child(even) {\n  background-color: #ebebeb;\n}\ntable[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  font-family: monospace;\n  font-size: 12px;\n  white-space: nowrap;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9vbGVrc2lpbWVsbnljaGVua28vUHJvamVjdHMvcm9ib3Qvc3JjL2FwcC9hcHAuY29tcG9uZW50LnNjc3MiLCJzcmMvYXBwL2FwcC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGFBQUE7RUFDQSxtQkFBQTtBQ0NGO0FEQ0U7RUFDRSx5QkFBQTtFQUNBLDRCQUFBO0VBQ0EsY0FBQTtFQUNBLFlBQUE7RUFDQSxzQkFBQTtFQUNBLGFBQUE7QUNDSjtBREVFO0VBQ0UseUJBQUE7RUFDQSxZQUFBO0VBQ0EsNEJBQUE7RUFDQSxjQUFBO0VBQ0Esc0JBQUE7RUFDQSxhQUFBO0FDQUo7QURHRTtFQUNFLGFBQUE7RUFDQSxtQkFBQTtFQUNBLGlCQUFBO0VBQ0EsaUJBQUE7RUFDQSx5QkFBQTtBQ0RKO0FETUU7RUFDRSx5QkFBQTtBQ0hKO0FETUU7RUFDRSxzQkFBQTtFQUNBLGVBQUE7RUFDQSxtQkFBQTtBQ0pKIiwiZmlsZSI6InNyYy9hcHAvYXBwLmNvbXBvbmVudC5zY3NzIiwic291cmNlc0NvbnRlbnQiOlsiLm5hdiB7XG4gIGRpc3BsYXk6IGZsZXg7XG4gIG1hcmdpbi1ib3R0b206IDIwcHg7XG5cbiAgLmlucHV0IHtcbiAgICBib3JkZXI6IDFweCBzb2xpZCAjNGE0YTRhO1xuICAgIGJvcmRlci1yYWRpdXM6IDE1cHggMCAwIDE1cHg7XG4gICAgbGluZS1oZWlnaHQ6IDI7XG4gICAgd2lkdGg6IDI1MHB4O1xuICAgIHBhZGRpbmc6IDAgMTBweCAwIDE1cHg7XG4gICAgb3V0bGluZTogbm9uZTtcbiAgfVxuXG4gIC5idG4ge1xuICAgIGJhY2tncm91bmQtY29sb3I6ICM0YTRhNGE7XG4gICAgYm9yZGVyOiBub25lO1xuICAgIGJvcmRlci1yYWRpdXM6IDAgMTVweCAxNXB4IDA7XG4gICAgY29sb3I6ICNmZmZmZmY7XG4gICAgcGFkZGluZzogMCAyMHB4IDAgMTVweDtcbiAgICBvdXRsaW5lOiBub25lO1xuICB9XG5cbiAgLmNvbXBhbnkge1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICBmb250LXdlaWdodDogYm9sZDtcbiAgICBtYXJnaW4tbGVmdDogMjBweDtcbiAgICB0ZXh0LXRyYW5zZm9ybTogdXBwZXJjYXNlO1xuICB9XG59XG5cbnRhYmxlIHtcbiAgdHI6bnRoLWNoaWxkKGV2ZW4pIHtcbiAgICBiYWNrZ3JvdW5kLWNvbG9yOiAjZWJlYmViO1xuICB9XG5cbiAgdGQge1xuICAgIGZvbnQtZmFtaWx5OiBtb25vc3BhY2U7XG4gICAgZm9udC1zaXplOiAxMnB4O1xuICAgIHdoaXRlLXNwYWNlOiBub3dyYXA7XG4gIH1cbn1cbiIsIi5uYXYge1xuICBkaXNwbGF5OiBmbGV4O1xuICBtYXJnaW4tYm90dG9tOiAyMHB4O1xufVxuLm5hdiAuaW5wdXQge1xuICBib3JkZXI6IDFweCBzb2xpZCAjNGE0YTRhO1xuICBib3JkZXItcmFkaXVzOiAxNXB4IDAgMCAxNXB4O1xuICBsaW5lLWhlaWdodDogMjtcbiAgd2lkdGg6IDI1MHB4O1xuICBwYWRkaW5nOiAwIDEwcHggMCAxNXB4O1xuICBvdXRsaW5lOiBub25lO1xufVxuLm5hdiAuYnRuIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogIzRhNGE0YTtcbiAgYm9yZGVyOiBub25lO1xuICBib3JkZXItcmFkaXVzOiAwIDE1cHggMTVweCAwO1xuICBjb2xvcjogI2ZmZmZmZjtcbiAgcGFkZGluZzogMCAyMHB4IDAgMTVweDtcbiAgb3V0bGluZTogbm9uZTtcbn1cbi5uYXYgLmNvbXBhbnkge1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBmb250LXdlaWdodDogYm9sZDtcbiAgbWFyZ2luLWxlZnQ6IDIwcHg7XG4gIHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7XG59XG5cbnRhYmxlIHRyOm50aC1jaGlsZChldmVuKSB7XG4gIGJhY2tncm91bmQtY29sb3I6ICNlYmViZWI7XG59XG50YWJsZSB0ZCB7XG4gIGZvbnQtZmFtaWx5OiBtb25vc3BhY2U7XG4gIGZvbnQtc2l6ZTogMTJweDtcbiAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcbn0iXX0= */"]
+      styles: [".nav[_ngcontent-%COMP%] {\n  display: flex;\n  margin-bottom: 20px;\n}\n.nav[_ngcontent-%COMP%]   .input[_ngcontent-%COMP%] {\n  border: 1px solid #4a4a4a;\n  border-radius: 15px 0 0 15px;\n  line-height: 2;\n  width: 250px;\n  padding: 0 10px 0 15px;\n  outline: none;\n}\n.nav[_ngcontent-%COMP%]   .btn[_ngcontent-%COMP%] {\n  background-color: #4a4a4a;\n  border: none;\n  border-radius: 0 15px 15px 0;\n  color: #ffffff;\n  padding: 0 20px 0 15px;\n  outline: none;\n}\n.nav[_ngcontent-%COMP%]   .company[_ngcontent-%COMP%] {\n  display: flex;\n  align-items: center;\n  font-weight: bold;\n  margin-left: 20px;\n  text-transform: uppercase;\n}\ntable[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:first-child   td[_ngcontent-%COMP%] {\n  vertical-align: top;\n  white-space: normal;\n}\ntable[_ngcontent-%COMP%]   tr[_ngcontent-%COMP%]:nth-child(even) {\n  background-color: #ebebeb;\n}\ntable[_ngcontent-%COMP%]   td[_ngcontent-%COMP%] {\n  font-family: monospace;\n  font-size: 12px;\n  white-space: nowrap;\n  padding: 0 10px;\n  text-align: right;\n}\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi9Vc2Vycy9vbGVrc2lpbWVsbnljaGVua28vUHJvamVjdHMvcm9ib3Qvc3JjL2FwcC9hcHAuY29tcG9uZW50LnNjc3MiLCJzcmMvYXBwL2FwcC5jb21wb25lbnQuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLGFBQUE7RUFDQSxtQkFBQTtBQ0NGO0FEQ0U7RUFDRSx5QkFBQTtFQUNBLDRCQUFBO0VBQ0EsY0FBQTtFQUNBLFlBQUE7RUFDQSxzQkFBQTtFQUNBLGFBQUE7QUNDSjtBREVFO0VBQ0UseUJBQUE7RUFDQSxZQUFBO0VBQ0EsNEJBQUE7RUFDQSxjQUFBO0VBQ0Esc0JBQUE7RUFDQSxhQUFBO0FDQUo7QURHRTtFQUNFLGFBQUE7RUFDQSxtQkFBQTtFQUNBLGlCQUFBO0VBQ0EsaUJBQUE7RUFDQSx5QkFBQTtBQ0RKO0FEUU07RUFDRSxtQkFBQTtFQUNBLG1CQUFBO0FDTFI7QURTSTtFQUNFLHlCQUFBO0FDUE47QURXRTtFQUNFLHNCQUFBO0VBQ0EsZUFBQTtFQUNBLG1CQUFBO0VBQ0EsZUFBQTtFQUNBLGlCQUFBO0FDVEoiLCJmaWxlIjoic3JjL2FwcC9hcHAuY29tcG9uZW50LnNjc3MiLCJzb3VyY2VzQ29udGVudCI6WyIubmF2IHtcbiAgZGlzcGxheTogZmxleDtcbiAgbWFyZ2luLWJvdHRvbTogMjBweDtcblxuICAuaW5wdXQge1xuICAgIGJvcmRlcjogMXB4IHNvbGlkICM0YTRhNGE7XG4gICAgYm9yZGVyLXJhZGl1czogMTVweCAwIDAgMTVweDtcbiAgICBsaW5lLWhlaWdodDogMjtcbiAgICB3aWR0aDogMjUwcHg7XG4gICAgcGFkZGluZzogMCAxMHB4IDAgMTVweDtcbiAgICBvdXRsaW5lOiBub25lO1xuICB9XG5cbiAgLmJ0biB7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogIzRhNGE0YTtcbiAgICBib3JkZXI6IG5vbmU7XG4gICAgYm9yZGVyLXJhZGl1czogMCAxNXB4IDE1cHggMDtcbiAgICBjb2xvcjogI2ZmZmZmZjtcbiAgICBwYWRkaW5nOiAwIDIwcHggMCAxNXB4O1xuICAgIG91dGxpbmU6IG5vbmU7XG4gIH1cblxuICAuY29tcGFueSB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xuICAgIG1hcmdpbi1sZWZ0OiAyMHB4O1xuICAgIHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7XG4gIH1cbn1cblxudGFibGUge1xuICB0ciB7XG4gICAgJjpmaXJzdC1jaGlsZCB7XG4gICAgICB0ZCB7XG4gICAgICAgIHZlcnRpY2FsLWFsaWduOiB0b3A7XG4gICAgICAgIHdoaXRlLXNwYWNlOiBub3JtYWw7XG4gICAgICB9XG4gICAgfVxuXG4gICAgJjpudGgtY2hpbGQoZXZlbikge1xuICAgICAgYmFja2dyb3VuZC1jb2xvcjogI2ViZWJlYjtcbiAgICB9XG4gIH1cblxuICB0ZCB7XG4gICAgZm9udC1mYW1pbHk6IG1vbm9zcGFjZTtcbiAgICBmb250LXNpemU6IDEycHg7XG4gICAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcbiAgICBwYWRkaW5nOiAwIDEwcHg7XG4gICAgdGV4dC1hbGlnbjogcmlnaHQ7XG4gIH1cbn1cbiIsIi5uYXYge1xuICBkaXNwbGF5OiBmbGV4O1xuICBtYXJnaW4tYm90dG9tOiAyMHB4O1xufVxuLm5hdiAuaW5wdXQge1xuICBib3JkZXI6IDFweCBzb2xpZCAjNGE0YTRhO1xuICBib3JkZXItcmFkaXVzOiAxNXB4IDAgMCAxNXB4O1xuICBsaW5lLWhlaWdodDogMjtcbiAgd2lkdGg6IDI1MHB4O1xuICBwYWRkaW5nOiAwIDEwcHggMCAxNXB4O1xuICBvdXRsaW5lOiBub25lO1xufVxuLm5hdiAuYnRuIHtcbiAgYmFja2dyb3VuZC1jb2xvcjogIzRhNGE0YTtcbiAgYm9yZGVyOiBub25lO1xuICBib3JkZXItcmFkaXVzOiAwIDE1cHggMTVweCAwO1xuICBjb2xvcjogI2ZmZmZmZjtcbiAgcGFkZGluZzogMCAyMHB4IDAgMTVweDtcbiAgb3V0bGluZTogbm9uZTtcbn1cbi5uYXYgLmNvbXBhbnkge1xuICBkaXNwbGF5OiBmbGV4O1xuICBhbGlnbi1pdGVtczogY2VudGVyO1xuICBmb250LXdlaWdodDogYm9sZDtcbiAgbWFyZ2luLWxlZnQ6IDIwcHg7XG4gIHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7XG59XG5cbnRhYmxlIHRyOmZpcnN0LWNoaWxkIHRkIHtcbiAgdmVydGljYWwtYWxpZ246IHRvcDtcbiAgd2hpdGUtc3BhY2U6IG5vcm1hbDtcbn1cbnRhYmxlIHRyOm50aC1jaGlsZChldmVuKSB7XG4gIGJhY2tncm91bmQtY29sb3I6ICNlYmViZWI7XG59XG50YWJsZSB0ZCB7XG4gIGZvbnQtZmFtaWx5OiBtb25vc3BhY2U7XG4gIGZvbnQtc2l6ZTogMTJweDtcbiAgd2hpdGUtc3BhY2U6IG5vd3JhcDtcbiAgcGFkZGluZzogMCAxMHB4O1xuICB0ZXh0LWFsaWduOiByaWdodDtcbn0iXX0= */"]
     });
     /*@__PURE__*/
 
