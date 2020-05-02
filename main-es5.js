@@ -203,9 +203,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         this.httpClient = httpClient;
         this.baseUrl = 'https://www.macrotrends.net/stocks/charts/';
-        this.userStr = 'https://www.macrotrends.net/stocks/charts/CACI/caci/total-assets';
         this.data = [];
-        this.head = ['Date', 'Asset Turnover', 'Annual Cash Flow from Financial Activities', 'Annual Cash Flow from Investing Activities', 'Annual Cash Flow from Operating Activities', 'Quarterly Cash on Hand', 'Annual Total Depreciation and Amortization - Cash Flow', 'Annual Total Common and Preferred Stock Dividends Paid', 'Quarterly EBITDA', 'Quarterly EPS', 'Gross Margin', 'Quarterly Gross Profit', 'Inventory Turnover Ratio', 'Annual Net Cash Flow', 'Quarterly Net Income', 'Net Margin', 'Annual Number of Employees', 'Quarterly Operating Income', 'Operating Margin', 'Price to Book Ratio', 'Price to FCF Ratio', 'Price to Sales Ratio', 'Quick Ratio', 'Quarterly Shares Growth', 'Quarterly Shares Outstanding', 'Receiveable Turnover', 'Quarterly Revenue', 'TTM Revenue', 'Return on Assets', 'Return on Equity', 'Return on Investment', 'Quarterly Share Holder Equity', 'Stock Price', 'Total Assets', 'Current Assets', 'Current Liabilities', 'Quarterly Total Liabilities', 'Quarterly Total Long Term Liabilities', 'Quarterly Total Long-Term Assets'];
+        this.head = ['Date', 'Payables turnover', 'Asset Turnover', 'Annual Cash Flow from Financial Activities', 'Annual Cash Flow from Investing Activities', 'Annual Cash Flow from Operating Activities', 'Quarterly Cash on Hand', 'Annual Total Depreciation and Amortization - Cash Flow', 'Annual Total Common and Preferred Stock Dividends Paid', 'Quarterly EBITDA', 'Quarterly EBIT', 'Quarterly EPS', 'Gross Margin', 'Quarterly Gross Profit', 'Inventory Turnover Ratio', 'Annual Net Cash Flow', 'Quarterly Net Income', 'Net Margin', 'Annual Number of Employees', 'Quarterly Operating Income', 'Operating Margin', 'Price to Book Ratio', 'Price to FCF Ratio', 'Price to Sales Ratio', 'Quick Ratio', 'Quarterly Shares Growth', 'Quarterly Shares Outstanding', 'Receiveable Turnover', 'Quarterly Revenue', 'Return on Assets', 'Return on Equity', 'Return on Investment', 'Quarterly Share Holder Equity', 'Stock Price', 'Total Assets', 'Current Assets', 'Current Liabilities', 'Quarterly Total Liabilities', 'Quarterly Total Long Term Liabilities', 'Quarterly Total Long-Term Assets'];
       }
 
       _createClass(AppComponent, [{
@@ -217,7 +216,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
           if (this.company) {
             this.data = [];
-            var uns = Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["combineLatest"])(this.fetchData('/cash-flow-from-financial-activities', 'Annual Cash Flow from Financial Activities'), this.fetchData('/cash-flow-from-investing-activities', 'Annual Cash Flow from Investing Activities'), this.fetchData('/cash-flow-from-operating-activities', 'Annual Cash Flow from Operating Activities'), this.fetchData('/cash-on-hand', 'Quarterly Cash on Hand'), this.fetchData('/ebitda', 'Quarterly EBITDA'), this.fetchData('/eps-earnings-per-share-diluted', 'Quarterly EPS'), this.fetchData('/gross-margin', 'Gross Margin Historical Data'), this.fetchData('/gross-profit', 'Quarterly Gross Profit'), this.fetchData('/net-income', 'Quarterly Net Income'), this.fetchData('/operating-income', 'Quarterly Operating Income'), this.fetchData('/pe-ration', 'PE Ratio Historical Data'), this.fetchData('/price-book', 'Price/Book Ratio Historical Data'), this.fetchData('/price-fcf', 'Price to Free Cash Flow Ratio Historical Data'), this.fetchData('/price-sales', 'P/S Ratio Historical Data'), this.fetchData('/shares-outstanding', 'Quarterly Shares Outstanding'), this.fetchData('/revenue', 'Quarterly Revenue'), this.fetchData('/roa', 'ROA - Return on Assets Historical Data'), this.fetchData('/roe', 'ROE - Return on Equity Historical Data'), this.fetchData('/roi', 'ROI - Return on Investment Historical Data'), this.fetchData('/current-ratio', 'Current Ratio Historical Data'), this.fetchData('/total-liabilities', 'Quarterly Total Liabilities'), this.fetchData('/total-depreciation-amortization-cash-flow', 'Annual Total Depreciation and Amortization - Cash Flow'), this.fetchData('/total-common-preferred-stock-dividends-paid', 'Annual Total Common and Preferred Stock Dividends Paid'), this.fetchData('/net-cash-flow', 'Annual Net Cash Flow'), this.fetchData('/net-profit-margin', 'Net Profit Margin Historical Data'), this.fetchData('/number-of-employees', 'Annual Number of Employees'), this.fetchData('/operating-margin', 'Operating Margin Historical Data'), this.fetchData('/quick-ratio', 'Quick Ratio Historical Data'), this.fetchData('/total-share-holder-equity', 'Quarterly Share Holder Equity'), this.fetchData('/total-long-term-assets', 'Quarterly Total Long-Term Assets'), this.fetchData('/total-long-term-liabilities', 'Quarterly Total Long Term Liabilities')).subscribe(function (tables) {
+            var uns = Object(rxjs__WEBPACK_IMPORTED_MODULE_2__["combineLatest"])(this.fetchData(Types.CHART, null, ['Quarterly Shares Growth']), this.fetchData(Types.DATABASE, '/financial-ratios', ['Asset Turnover', 'Inventory Turnover Ratio', 'Receiveable Turnover']), this.fetchData(Types.TABLE, '/cash-flow-from-financial-activities', ['Annual Cash Flow from Financial Activities']), this.fetchData(Types.TABLE, '/cash-flow-from-investing-activities', ['Annual Cash Flow from Investing Activities']), this.fetchData(Types.TABLE, '/cash-flow-from-operating-activities', ['Annual Cash Flow from Operating Activities']), this.fetchData(Types.TABLE, '/cash-on-hand', ['Quarterly Cash on Hand']), this.fetchData(Types.TABLE, '/current-ratio', ['Current Ratio Historical Data']), this.fetchData(Types.TABLE, '/ebit', ['Quarterly EBIT']), this.fetchData(Types.TABLE, '/ebitda', ['Quarterly EBITDA']), this.fetchData(Types.TABLE, '/eps-earnings-per-share-diluted', ['Quarterly EPS']), this.fetchData(Types.TABLE, '/gross-margin', ['Gross Margin Historical Data']), this.fetchData(Types.TABLE, '/gross-profit', ['Quarterly Gross Profit']), this.fetchData(Types.TABLE, '/net-cash-flow', ['Annual Net Cash Flow']), this.fetchData(Types.TABLE, '/net-income', ['Quarterly Net Income']), this.fetchData(Types.TABLE, '/net-profit-margin', ['Net Profit Margin Historical Data']), this.fetchData(Types.TABLE, '/number-of-employees', ['Annual Number of Employees']), this.fetchData(Types.TABLE, '/operating-income', ['Quarterly Operating Income']), this.fetchData(Types.TABLE, '/operating-margin', ['Operating Margin Historical Data']), this.fetchData(Types.TABLE, '/pe-ration', ['PE Ratio Historical Data']), this.fetchData(Types.TABLE, '/price-book', ['Price/Book Ratio Historical Data']), this.fetchData(Types.TABLE, '/price-fcf', ['Price to Free Cash Flow Ratio Historical Data']), this.fetchData(Types.TABLE, '/price-sales', ['P/S Ratio Historical Data']), this.fetchData(Types.TABLE, '/quick-ratio', ['Quick Ratio Historical Data']), this.fetchData(Types.TABLE, '/revenue', ['Quarterly Revenue']), this.fetchData(Types.TABLE, '/roa', ['ROA - Return on Assets Historical Data']), this.fetchData(Types.TABLE, '/roe', ['ROE - Return on Equity Historical Data']), this.fetchData(Types.TABLE, '/roi', ['ROI - Return on Investment Historical Data']), this.fetchData(Types.TABLE, '/shares-outstanding', ['Quarterly Shares Outstanding']), this.fetchData(Types.TABLE, '/total-common-preferred-stock-dividends-paid', ['Annual Total Common and Preferred Stock Dividends Paid']), this.fetchData(Types.TABLE, '/total-depreciation-amortization-cash-flow', ['Annual Total Depreciation and Amortization - Cash Flow']), this.fetchData(Types.TABLE, '/total-liabilities', ['Quarterly Total Liabilities']), this.fetchData(Types.TABLE, '/total-long-term-assets', ['Quarterly Total Long-Term Assets']), this.fetchData(Types.TABLE, '/total-long-term-liabilities', ['Quarterly Total Long Term Liabilities']), this.fetchData(Types.TABLE, '/total-share-holder-equity', ['Quarterly Share Holder Equity'])).subscribe(function (tables) {
               uns.unsubscribe();
               console.log(tables);
 
@@ -308,17 +307,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }, {
         key: "fetchData",
-        value: function fetchData(url, tableName) {
+        value: function fetchData(type, path, tableName) {
           var _this4 = this;
 
-          return this.httpClient.get(this.baseUrl + this.company + url, {
+          return this.httpClient.get(this.getUrl(type, path), {
             responseType: 'text'
           }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
             var clearText = _this4.clearText(response);
 
-            var table = _this4.getTable(clearText, tableName);
+            switch (type) {
+              case Types.CHART:
+                return _this4.parseChart(clearText, tableName[0]);
 
-            return _this4.parseTable(table, tableName);
+              case Types.DATABASE:
+                return _this4.parseDatabase(clearText, tableName);
+
+              case Types.TABLE:
+                return _this4.parseTable(clearText, tableName[0]);
+            }
           }));
         }
       }, {
@@ -328,35 +334,107 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           return text.replace(/[^\S ]/gi, '').replace(/ style="text-align:(\w+);?"/gi, '').replace(/ {2}/gi, ' ').replace(/> </gi, '><');
         }
       }, {
-        key: "getTable",
-        value: function getTable() {
+        key: "parseChart",
+        value: function parseChart() {
+          var _this5 = this;
+
           var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-          var key = arguments.length > 1 ? arguments[1] : undefined;
-          var tables = text.match(/<table(.*?)table>/gi) || [];
-          return tables.find(function (item) {
-            return item.match(new RegExp(key, 'i'));
+          var tableName = arguments.length > 1 ? arguments[1] : undefined;
+          var dataArr = text.match(/var chartData = \[(.*?)]/gi) || [];
+          var dataStr = dataArr[0] && dataArr[0].slice(16);
+          var dataObj = JSON.parse(dataStr);
+          var head = ['Date', tableName];
+          var body = [];
+          dataObj.forEach(function (item) {
+            if ('2007' <= item.date) {
+              body.push([item.date, _this5.getValue(item.v3) + '%']);
+            }
           });
+          return [head].concat(body);
+        }
+      }, {
+        key: "parseDatabase",
+        value: function parseDatabase() {
+          var _this6 = this;
+
+          var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+          var tableName = arguments.length > 1 ? arguments[1] : undefined;
+          var dataArr = text.match(/var originalData = \[(.*?)]/gi) || [];
+          var dataStr = dataArr[0] && dataArr[0].slice(19);
+          var dataObj = JSON.parse(dataStr);
+          var head = ['Date'];
+          var body = [];
+          tableName.forEach(function (name) {
+            dataObj.find(function (item) {
+              if (item.field_name.includes(name)) {
+                head.push(name);
+
+                var _loop = function _loop(e) {
+                  if (item.hasOwnProperty(e) && !isNaN(new Date(e).getTime()) && '2007' <= e) {
+                    if (head.length < 3) {
+                      body.push([e.slice(0, 4), _this6.getValue(item[e])]);
+                    } else {
+                      body.find(function (row) {
+                        if (row[0] === e.slice(0, 4)) {
+                          row.push(_this6.getValue(item[e]));
+                        }
+                      });
+                    }
+                  }
+                };
+
+                for (var e in item) {
+                  _loop(e);
+                }
+              }
+            });
+          });
+          return [head].concat(body);
         }
       }, {
         key: "parseTable",
-        value: function parseTable(table, tableName) {
-          var heads = table.match(/<thead(.*?)thead>/gi);
-          var head = heads[1] ? heads[1].slice(15, -18).split('</th><th>') : ['Date', tableName];
+        value: function parseTable() {
+          var _this7 = this;
+
+          var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+          var tableName = arguments.length > 1 ? arguments[1] : undefined;
+          var tableArr = text.match(/<table(.*?)table>/gi) || [];
+          var tableStr = tableArr.find(function (item) {
+            return item.match(new RegExp(tableName, 'i'));
+          });
+          var headArr = tableStr.match(/<thead(.*?)thead>/gi);
+          var head = headArr[1] ? headArr[1].slice(15, -18).split('</th><th>') : ['Date', tableName];
           var body = [];
-          var rows = table.match(/<tbody(.*?)tbody>/gi)[0].slice(11, -13).split('</tr><tr>');
+          var rows = tableStr.match(/<tbody(.*?)tbody>/gi)[0].slice(11, -13).split('</tr><tr>');
           rows.forEach(function (row) {
             var cells = row.slice(4, -5).split('</td><td>');
 
             if ('2007' <= cells[0]) {
               cells.forEach(function (cell, cellIndex) {
-                if (!cell) {
-                  cells[cellIndex] = '0';
-                }
+                return cells[cellIndex] = _this7.getValue(cell);
               });
               body.push(cells);
             }
           });
           return [head].concat(body);
+        }
+      }, {
+        key: "getValue",
+        value: function getValue(str) {
+          return /\d/.test(str) ? str : '0';
+        }
+      }, {
+        key: "getUrl",
+        value: function getUrl(type, path) {
+          switch (type) {
+            case Types.CHART:
+              var id = this.company.slice(0, this.company.indexOf('/'));
+              return "https://www.macrotrends.net/assets/php/fundamental_iframe.php?t=".concat(id, "&type=shares-outstanding&statement=income-statement&freq=Q");
+
+            case Types.DATABASE:
+            case Types.TABLE:
+              return this.baseUrl + this.company + path;
+          }
         }
       }]);
 
@@ -451,6 +529,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }];
       }, null);
     })();
+
+    var Types;
+
+    (function (Types) {
+      Types[Types["CHART"] = 0] = "CHART";
+      Types[Types["DATABASE"] = 1] = "DATABASE";
+      Types[Types["TABLE"] = 2] = "TABLE";
+    })(Types || (Types = {}));
     /***/
 
   },
