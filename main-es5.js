@@ -362,7 +362,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               var time = new Date(row[0].length === 4 ? row[0] + '-12-01' : row[0]).getTime();
 
               var globalRowIndex = _this4.quarters.findIndex(function (quarter) {
-                return quarter.min < time && time < quarter.max;
+                return quarter.min <= time && time <= quarter.max;
               });
 
               if (globalRowIndex !== -1) {
@@ -392,7 +392,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             return this.httpClient.get(this.getUrl(type, path), {
               responseType: 'text'
             }).pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])(function (response) {
-              var clearText = _this5.clearText(response);
+              var clearText = _this5.clearText(response || '');
 
               switch (type) {
                 case Types.TABLE:
@@ -411,41 +411,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
         }
       }, {
-        key: "getUrl",
-        value: function getUrl(type, path) {
-          switch (type) {
-            case Types.TABLE:
-            case Types.DATABASE:
-              return this.macrotrendsTableUrl + this.companyFull + path;
-
-            case Types.CHART:
-              return this.macrotrendsChartUrl;
-
-            case Types.DISCOVERCI:
-              return this.discoverciInput || this.discoverciChartUrl;
-          }
-        }
-      }, {
         key: "clearText",
-        value: function clearText() {
-          var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+        value: function clearText(text) {
           return text.replace(/[^\S ]/gi, '').replace(/ style="text-align:(\w+);?"/gi, '').replace(/ {2}/gi, ' ').replace(/> </gi, '><');
         }
       }, {
         key: "parseTable",
-        value: function parseTable() {
+        value: function parseTable(text, name) {
           var _this6 = this;
 
-          var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-          var tableName = arguments.length > 1 ? arguments[1] : undefined;
           var tableArr = text.match(/<table(.*?)table>/gi) || [];
           var tableStr = tableArr.find(function (item) {
-            return item.match(new RegExp(tableName, 'i'));
-          });
-          var headArr = tableStr.match(/<thead(.*?)thead>/gi);
-          var head = headArr[1] ? headArr[1].slice(15, -18).split('</th><th>') : ['Date', tableName];
+            return item.match(new RegExp(name, 'i'));
+          }) || '';
+
+          if (!tableStr) {
+            return [];
+          }
+
+          var headArr = tableStr.match(/<thead(.*?)thead>/gi) || [];
+          var bodyArr = tableStr.match(/<tbody(.*?)tbody>/gi) || [];
+          var head = headArr[1] && headArr[1].slice(15, -18).split('</th><th>') || ['Date', name];
           var body = [];
-          var rows = tableStr.match(/<tbody(.*?)tbody>/gi)[0].slice(11, -13).split('</tr><tr>');
+          var rows = bodyArr[0] && bodyArr[0].slice(11, -13).split('</tr><tr>');
           rows.forEach(function (row) {
             var cells = row.slice(4, -5).split('</td><td>');
 
@@ -460,17 +448,20 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }, {
         key: "parseDatabase",
-        value: function parseDatabase() {
+        value: function parseDatabase(text, names) {
           var _this7 = this;
 
-          var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-          var tableName = arguments.length > 1 ? arguments[1] : undefined;
           var dataArr = text.match(/var originalData = \[(.*?)]/gi) || [];
           var dataStr = dataArr[0] && dataArr[0].slice(19);
-          var dataObj = JSON.parse(dataStr);
+          var dataObj = this.parseJSON(dataStr);
+
+          if (!dataObj) {
+            return [];
+          }
+
           var head = ['Date'];
           var body = [];
-          tableName.forEach(function (name) {
+          names.forEach(function (name) {
             dataObj.find(function (item) {
               if (item.field_name.includes(name)) {
                 head.push(name);
@@ -499,15 +490,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }, {
         key: "parseChart",
-        value: function parseChart() {
+        value: function parseChart(text, name) {
           var _this8 = this;
 
-          var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-          var tableName = arguments.length > 1 ? arguments[1] : undefined;
           var dataArr = text.match(/var chartData = \[(.*?)]/gi) || [];
           var dataStr = dataArr[0] && dataArr[0].slice(16);
-          var dataObj = JSON.parse(dataStr);
-          var head = ['Date', tableName];
+          var dataObj = this.parseJSON(dataStr);
+
+          if (!dataObj) {
+            return [];
+          }
+
+          var head = ['Date', name];
           var body = [];
           dataObj.forEach(function (item) {
             if (String(_this8.minYear) <= item.date) {
@@ -518,19 +512,45 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
       }, {
         key: "parseDiscoverci",
-        value: function parseDiscoverci() {
-          var text = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-          var tableName = arguments.length > 1 ? arguments[1] : undefined;
+        value: function parseDiscoverci(text, name) {
           var dataArr = text.match(/var metricData = anychart.data.set\((.*?)\)/gi) || [];
           var dataStr = dataArr[0] && dataArr[0].slice(35, -1);
-          var dataObj = JSON.parse(dataStr);
-          var head = ['Date', tableName];
-          return [head].concat(_toConsumableArray(dataObj));
+          var dataObj = this.parseJSON(dataStr);
+
+          if (!dataObj) {
+            return [];
+          }
+
+          return [['Date', name]].concat(_toConsumableArray(dataObj));
         }
       }, {
         key: "getValue",
         value: function getValue(str) {
-          return /\d/.test(str) ? str : '0';
+          return /\d/.test(String(str)) ? String(str) : '0';
+        }
+      }, {
+        key: "parseJSON",
+        value: function parseJSON(data) {
+          try {
+            return JSON.parse(data);
+          } catch (e) {
+            return null;
+          }
+        }
+      }, {
+        key: "getUrl",
+        value: function getUrl(type, path) {
+          switch (type) {
+            case Types.TABLE:
+            case Types.DATABASE:
+              return this.macrotrendsTableUrl + this.companyFull + path;
+
+            case Types.CHART:
+              return this.macrotrendsChartUrl;
+
+            case Types.DISCOVERCI:
+              return this.discoverciInput || this.discoverciChartUrl;
+          }
         }
       }, {
         key: "macrotrendsTableUrl",

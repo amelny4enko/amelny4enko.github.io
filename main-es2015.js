@@ -221,7 +221,7 @@ class AppComponent {
             headMap[0] = -1;
             ctable.forEach((row) => {
                 const time = new Date((row[0].length === 4) ? (row[0] + '-12-01') : row[0]).getTime();
-                const globalRowIndex = this.quarters.findIndex((quarter) => quarter.min < time && time < quarter.max);
+                const globalRowIndex = this.quarters.findIndex((quarter) => quarter.min <= time && time <= quarter.max);
                 if (globalRowIndex !== -1) {
                     row.forEach((cell, cellIndex) => {
                         if (headMap[cellIndex] !== -1) {
@@ -242,7 +242,7 @@ class AppComponent {
         if (this.getUrl(type, path)) {
             return this.httpClient.get(this.getUrl(type, path), { responseType: 'text' })
                 .pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_1__["map"])((response) => {
-                const clearText = this.clearText(response);
+                const clearText = this.clearText(response || '');
                 switch (type) {
                     case Types.TABLE:
                         return this.parseTable(clearText, names[0]);
@@ -256,40 +256,26 @@ class AppComponent {
             }));
         }
     }
-    getUrl(type, path) {
-        switch (type) {
-            case Types.TABLE:
-            case Types.DATABASE:
-                return this.macrotrendsTableUrl + this.companyFull + path;
-            case Types.CHART:
-                return this.macrotrendsChartUrl;
-            case Types.DISCOVERCI:
-                return this.discoverciInput || this.discoverciChartUrl;
-        }
-    }
-    clearText(text = '') {
+    clearText(text) {
         return text
             .replace(/[^\S ]/gi, '')
             .replace(/ style="text-align:(\w+);?"/gi, '')
             .replace(/ {2}/gi, ' ')
             .replace(/> </gi, '><');
     }
-    parseTable(text = '', tableName) {
+    parseTable(text, name) {
         const tableArr = text.match(/<table(.*?)table>/gi) || [];
-        const tableStr = tableArr.find((item) => item.match(new RegExp(tableName, 'i')));
-        const headArr = tableStr.match(/<thead(.*?)thead>/gi);
-        const head = headArr[1]
-            ? headArr[1].slice(15, -18).split('</th><th>')
-            : ['Date', tableName];
+        const tableStr = tableArr.find((item) => item.match(new RegExp(name, 'i'))) || '';
+        if (!tableStr) {
+            return [];
+        }
+        const headArr = tableStr.match(/<thead(.*?)thead>/gi) || [];
+        const bodyArr = tableStr.match(/<tbody(.*?)tbody>/gi) || [];
+        const head = headArr[1] && headArr[1].slice(15, -18).split('</th><th>') || ['Date', name];
         const body = [];
-        const rows = tableStr
-            .match(/<tbody(.*?)tbody>/gi)[0]
-            .slice(11, -13)
-            .split('</tr><tr>');
+        const rows = bodyArr[0] && bodyArr[0].slice(11, -13).split('</tr><tr>');
         rows.forEach((row) => {
-            const cells = row
-                .slice(4, -5)
-                .split('</td><td>');
+            const cells = row.slice(4, -5).split('</td><td>');
             if (String(this.minYear) <= cells[0]) {
                 cells.forEach((cell, cellIndex) => cells[cellIndex] = this.getValue(cell));
                 body.push(cells);
@@ -297,13 +283,16 @@ class AppComponent {
         });
         return [head, ...body];
     }
-    parseDatabase(text = '', tableName) {
+    parseDatabase(text, names) {
         const dataArr = text.match(/var originalData = \[(.*?)]/gi) || [];
         const dataStr = dataArr[0] && dataArr[0].slice(19);
-        const dataObj = JSON.parse(dataStr);
+        const dataObj = this.parseJSON(dataStr);
+        if (!dataObj) {
+            return [];
+        }
         const head = ['Date'];
         const body = [];
-        tableName.forEach((name) => {
+        names.forEach((name) => {
             dataObj.find((item) => {
                 if (item.field_name.includes(name)) {
                     head.push(name);
@@ -326,11 +315,14 @@ class AppComponent {
         });
         return [head, ...body];
     }
-    parseChart(text = '', tableName) {
+    parseChart(text, name) {
         const dataArr = text.match(/var chartData = \[(.*?)]/gi) || [];
         const dataStr = dataArr[0] && dataArr[0].slice(16);
-        const dataObj = JSON.parse(dataStr);
-        const head = ['Date', tableName];
+        const dataObj = this.parseJSON(dataStr);
+        if (!dataObj) {
+            return [];
+        }
+        const head = ['Date', name];
         const body = [];
         dataObj.forEach((item) => {
             if (String(this.minYear) <= item.date) {
@@ -339,15 +331,36 @@ class AppComponent {
         });
         return [head, ...body];
     }
-    parseDiscoverci(text = '', tableName) {
+    parseDiscoverci(text, name) {
         const dataArr = text.match(/var metricData = anychart.data.set\((.*?)\)/gi) || [];
         const dataStr = dataArr[0] && dataArr[0].slice(35, -1);
-        const dataObj = JSON.parse(dataStr);
-        const head = ['Date', tableName];
-        return [head, ...dataObj];
+        const dataObj = this.parseJSON(dataStr);
+        if (!dataObj) {
+            return [];
+        }
+        return [['Date', name], ...dataObj];
     }
     getValue(str) {
-        return /\d/.test(str) ? str : '0';
+        return /\d/.test(String(str)) ? String(str) : '0';
+    }
+    parseJSON(data) {
+        try {
+            return JSON.parse(data);
+        }
+        catch (e) {
+            return null;
+        }
+    }
+    getUrl(type, path) {
+        switch (type) {
+            case Types.TABLE:
+            case Types.DATABASE:
+                return this.macrotrendsTableUrl + this.companyFull + path;
+            case Types.CHART:
+                return this.macrotrendsChartUrl;
+            case Types.DISCOVERCI:
+                return this.discoverciInput || this.discoverciChartUrl;
+        }
     }
     get macrotrendsTableUrl() {
         return `${this.macrotrendsBaseUrl}stocks/charts/`;
