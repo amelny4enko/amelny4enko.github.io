@@ -396,14 +396,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
               if (globalRowIndex !== -1) {
                 row.forEach(function (cell, cellIndex) {
                   if (headMap[cellIndex] !== -1) {
-                    if (String(cell).includes('B')) {
-                      var amount = cell.slice(1, -1);
+                    cell = String(cell).replace(/[,$%</]/gi, '');
 
-                      if (!isNaN(+amount)) {
-                        cell = cell.slice(0, 1) + +amount * 1000;
+                    if (String(cell).includes('B')) {
+                      cell = String(cell).replace(/B/gi, '');
+
+                      if (!isNaN(+cell)) {
+                        cell = +cell * 1000000000;
+                        cell = Math.floor(cell);
                       }
                     }
 
+                    cell = Math.ceil(+cell * 100) / 100;
+                    cell = String(cell).replace(/\./gi, ',');
                     _this4.table[globalRowIndex + 1][headMap[cellIndex]] = cell;
                   }
                 });
@@ -579,9 +584,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }, {
         key: "getValue",
         value: function getValue(str) {
-          var val = /\d/.test(String(str)) ? String(str) : '0';
-          val = val.replace(/[$%]/gi, '').replace('.', ',');
-          return val;
+          return /\d/.test(String(str)) ? String(str) : '0';
         }
       }, {
         key: "parseJSON",
