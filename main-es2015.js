@@ -274,6 +274,9 @@ class Page1Component {
         this.clipboard.copy(str);
     }
     onSearch() {
+        if (!this.macrotrendsInput) {
+            return;
+        }
         this.getCompany();
         const uns = Object(rxjs__WEBPACK_IMPORTED_MODULE_1__["combineLatest"])(this.fetchData(Types.TABLE, '/cash-flow-from-financial-activities', ['Annual Cash Flow from Financial Activities']), this.fetchData(Types.TABLE, '/cash-flow-from-investing-activities', ['Annual Cash Flow from Investing Activities']), this.fetchData(Types.TABLE, '/cash-flow-from-operating-activities', ['Annual Cash Flow from Operating Activities']), this.fetchData(Types.TABLE, '/cash-on-hand', ['Quarterly Cash on Hand']), this.fetchData(Types.TABLE, '/current-ratio', ['Current Ratio Historical Data']), this.fetchData(Types.TABLE, '/ebit', ['Quarterly EBIT']), this.fetchData(Types.TABLE, '/ebitda', ['Quarterly EBITDA']), this.fetchData(Types.TABLE, '/eps-earnings-per-share-diluted', ['Quarterly EPS']), this.fetchData(Types.TABLE, '/gross-margin', ['Gross Margin Historical Data']), this.fetchData(Types.TABLE, '/gross-profit', ['Quarterly Gross Profit']), this.fetchData(Types.TABLE, '/net-cash-flow', ['Annual Net Cash Flow']), this.fetchData(Types.TABLE, '/net-income', ['Quarterly Net Income']), this.fetchData(Types.TABLE, '/net-profit-margin', ['Net Profit Margin Historical Data']), this.fetchData(Types.TABLE, '/number-of-employees', ['Annual Number of Employees']), this.fetchData(Types.TABLE, '/operating-income', ['Quarterly Operating Income']), this.fetchData(Types.TABLE, '/operating-margin', ['Operating Margin Historical Data']), this.fetchData(Types.TABLE, '/pe-ration', ['PE Ratio Historical Data']), this.fetchData(Types.TABLE, '/price-book', ['Price/Book Ratio Historical Data']), this.fetchData(Types.TABLE, '/price-fcf', ['Price to Free Cash Flow Ratio Historical Data']), this.fetchData(Types.TABLE, '/price-sales', ['P/S Ratio Historical Data']), this.fetchData(Types.TABLE, '/quick-ratio', ['Quick Ratio Historical Data']), this.fetchData(Types.TABLE, '/revenue', ['Quarterly Revenue']), this.fetchData(Types.TABLE, '/roa', ['ROA - Return on Assets Historical Data']), this.fetchData(Types.TABLE, '/roe', ['ROE - Return on Equity Historical Data']), this.fetchData(Types.TABLE, '/roi', ['ROI - Return on Investment Historical Data']), this.fetchData(Types.TABLE, '/shares-outstanding', ['Quarterly Shares Outstanding']), this.fetchData(Types.TABLE, '/total-common-preferred-stock-dividends-paid', ['Annual Total Common and Preferred Stock Dividends Paid']), this.fetchData(Types.TABLE, '/total-depreciation-amortization-cash-flow', ['Annual Total Depreciation and Amortization - Cash Flow']), this.fetchData(Types.TABLE, '/total-liabilities', ['Quarterly Total Liabilities']), this.fetchData(Types.TABLE, '/total-long-term-assets', ['Quarterly Total Long-Term Assets']), this.fetchData(Types.TABLE, '/total-long-term-liabilities', ['Quarterly Total Long Term Liabilities']), this.fetchData(Types.TABLE, '/total-share-holder-equity', ['Quarterly Share Holder Equity']), this.fetchData(Types.DATABASE, '/financial-ratios', ['Asset Turnover', 'Inventory Turnover Ratio', 'Receiveable Turnover']), this.fetchData(Types.CHART, null, ['Quarterly Shares Growth']), this.fetchData(Types.DISCOVERCI, null, ['Payables turnover'])).subscribe((tables) => {
             uns.unsubscribe();
@@ -442,15 +445,15 @@ class Page1Component {
     }
 }
 Page1Component.ɵfac = function Page1Component_Factory(t) { return new (t || Page1Component)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_cdk_clipboard__WEBPACK_IMPORTED_MODULE_4__["Clipboard"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_5__["HttpClient"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_page_1_service__WEBPACK_IMPORTED_MODULE_6__["Page1Service"])); };
-Page1Component.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: Page1Component, selectors: [["app-page-1"]], decls: 13, vars: 5, consts: [[1, "page", "page-1"], [1, "head"], [1, "col"], ["placeholder", "https://www.macrotrends.net/...", 3, "ngModel", "ngModelChange"], ["placeholder", "https://www.discoverci.com/...", 3, "ngModel", "ngModelChange"], ["mat-flat-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", 3, "click"], ["class", "body", 4, "ngIf"], [1, "body"], [3, "ngClass", 4, "ngFor", "ngForOf"], [3, "ngClass"], [3, "innerHTML", 4, "ngFor", "ngForOf"], [3, "innerHTML"]], template: function Page1Component_Template(rf, ctx) { if (rf & 1) {
+Page1Component.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: Page1Component, selectors: [["app-page-1"]], decls: 13, vars: 5, consts: [[1, "page", "page-1"], [1, "head"], [1, "col"], ["placeholder", "https://www.macrotrends.net/...", 3, "ngModel", "ngModelChange", "keyup.enter"], ["placeholder", "https://www.discoverci.com/...", 3, "ngModel", "ngModelChange", "keyup.enter"], ["mat-flat-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", 3, "click"], ["class", "body", 4, "ngIf"], [1, "body"], [3, "ngClass", 4, "ngFor", "ngForOf"], [3, "ngClass"], [3, "innerHTML", 4, "ngFor", "ngForOf"], [3, "innerHTML"]], template: function Page1Component_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "div", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "input", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngModelChange", function Page1Component_Template_input_ngModelChange_3_listener($event) { return ctx.macrotrendsInput = $event; });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngModelChange", function Page1Component_Template_input_ngModelChange_3_listener($event) { return ctx.macrotrendsInput = $event; })("keyup.enter", function Page1Component_Template_input_keyup_enter_3_listener() { return ctx.onSearch(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "input", 4);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngModelChange", function Page1Component_Template_input_ngModelChange_4_listener($event) { return ctx.discoverciInput = $event; });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngModelChange", function Page1Component_Template_input_ngModelChange_4_listener($event) { return ctx.discoverciInput = $event; })("keyup.enter", function Page1Component_Template_input_keyup_enter_4_listener() { return ctx.onSearch(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](5, "div", 2);
@@ -678,12 +681,15 @@ class Page2Component {
         this.data = [];
     }
     onSearch() {
+        if (!this.ids) {
+            return;
+        }
         this.data = [];
         const ids = this.ids
             .toLowerCase()
             .replace(/ /gi, '')
             .split('\n');
-        ids.forEach((id) => this.fetchData(id));
+        ids.forEach((id) => id && this.fetchData(id));
     }
     fetchData(id) {
         const sub = this.httpClient.get(this.url(id))
@@ -719,12 +725,12 @@ class Page2Component {
     }
 }
 Page2Component.ɵfac = function Page2Component_Factory(t) { return new (t || Page2Component)(_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_cdk_clipboard__WEBPACK_IMPORTED_MODULE_1__["Clipboard"]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdirectiveInject"](_angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"])); };
-Page2Component.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: Page2Component, selectors: [["app-page-2"]], decls: 14, vars: 4, consts: [[1, "page", "page-2"], [1, "content"], [1, "col"], [3, "ngModel", "ngModelChange"], ["mat-flat-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", 3, "click"], [4, "ngFor", "ngForOf"]], template: function Page2Component_Template(rf, ctx) { if (rf & 1) {
+Page2Component.ɵcmp = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵdefineComponent"]({ type: Page2Component, selectors: [["app-page-2"]], decls: 14, vars: 4, consts: [[1, "page", "page-2"], [1, "content"], [1, "col"], [3, "ngModel", "ngModelChange", "keyup.enter"], ["mat-flat-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", "color", "primary", 3, "disabled", "click"], ["mat-stroked-button", "", 3, "click"], [4, "ngFor", "ngForOf"]], template: function Page2Component_Template(rf, ctx) { if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](1, "div", 1);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](2, "div", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "textarea", 3);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngModelChange", function Page2Component_Template_textarea_ngModelChange_3_listener($event) { return ctx.ids = $event; });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("ngModelChange", function Page2Component_Template_textarea_ngModelChange_3_listener($event) { return ctx.ids = $event; })("keyup.enter", function Page2Component_Template_textarea_keyup_enter_3_listener() { return ctx.onSearch(); });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "div", 2);
