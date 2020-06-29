@@ -699,8 +699,11 @@ class Page2Component {
         if (!isNaN(currentPrice) && !isNaN(previousPrice)) {
             const priceDifference = Math.round((currentPrice - previousPrice) * 100) / 100;
             const percentDifference = Math.round(priceDifference / previousPrice * 10000) / 100;
-            this.data.push([id.toUpperCase(), currentPrice, priceDifference, percentDifference + '%']);
+            this.data.push([id.toUpperCase(), this.val(currentPrice), this.val(priceDifference), this.val(percentDifference) + '%']);
         }
+    }
+    val(val) {
+        return String(val).replace(/\./gi, ',');
     }
     onCopy() {
         let str = '';

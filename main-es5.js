@@ -1190,8 +1190,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           if (!isNaN(currentPrice) && !isNaN(previousPrice)) {
             var priceDifference = Math.round((currentPrice - previousPrice) * 100) / 100;
             var percentDifference = Math.round(priceDifference / previousPrice * 10000) / 100;
-            this.data.push([id.toUpperCase(), currentPrice, priceDifference, percentDifference + '%']);
+            this.data.push([id.toUpperCase(), this.val(currentPrice), this.val(priceDifference), this.val(percentDifference) + '%']);
           }
+        }
+      }, {
+        key: "val",
+        value: function val(_val) {
+          return String(_val).replace(/\./gi, ',');
         }
       }, {
         key: "onCopy",
